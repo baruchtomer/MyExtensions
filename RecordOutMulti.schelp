@@ -1,0 +1,67 @@
+class:: RecordOutMulti
+summary:: Record multitrack output to disk
+related:: Classes/DiskOut
+categories::  UGens>InOut, UGens>Buffer
+
+Description::
+A wrapper around DiskOut to easily record multichannel audio to disk as multiple mono / stereo files.
+
+
+subsection:: Disk recording procedure
+
+Recording to disk involves several steps, which should be taken in the right order. link::Classes/Server#-record:: performs these steps for you. To record arbitrary buses using DiskOut explicitly, make sure to do the following:
+
+
+classmethods::
+private:: categories
+
+method::new
+Creates a new instance of the RecordOutMulti class, in order to record the multichannel output.
+
+argument::server
+currently used server.
+
+argument::recordPath
+path to record the multiple files, if nil, will record into the default SC recording library
+
+argument::filename
+the beginning of the filename to be used for the recordings. After this header the class will add the file the time/date (if the next argument is 'true') and then the channel number of the file and the extension.
+
+argument::inMono
+An array of mono tracks to be recorded. (ie: [0,2,5,6]) If there is only one channel to record the [] may be omitted. If nil no mono channels will be recorded
+
+argument::inStereo
+An array of stereo tracks to be recorded - only the first of each pair.  ie: [0,5,8] will record [0,1], [5,6] and [8,9] into three stereo files. If there is only one file to record the [] may be omitted.
+
+argument::addTime
+'true' will add the date and time to the file name.
+
+returns:: a new instance of the RecordOutMulti class.
+
+instancemethods::
+Method::record
+Start recording. Will start recording after a very short time. Good for most cases.
+
+method::stop
+Stop recording.
+
+method::prepare
+prepare for a synced recording: see method start
+
+method::start
+If you need the recording to start exactly on a given moment use the method prepare first and then use "start" exactly when you want the recording to start. Please note that if you will not wait between "prepare" and "start" it might not work properly.
+
+
+Examples::
+code::
+// prepare a recorder object:
+r=RecordOutMulti.new(s, inMono:[9,10], inStereo:[0,2])
+// this object will record two mono channels and two stereo channels into four files. With default SC settings it will record the first two input of the audio interface and the first four outputs of supercollider.
+
+
+r.record // start recording
+
+
+r.stop  //stop recording
+
+//if you want to record another chunk you can just do r.record again 
